@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audit Result | ExpenseEngine</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #F9FAFB;
+            --card-bg: #FFFFFF;
+            --border-color: #E5E7EB;
+            --text-primary: #111827;
+            --text-secondary: #6B7280;
+            
+            --success-bg: #ECFDF5;
+            --success-text: #059669;
+            --error-bg: #FEF2F2;
+            --error-text: #DC2626;
+            --warning-bg: #FFFBEB;
+            --warning-text: #D97706;
+            --info-bg: #EFF6FF;
+            --info-text: #3B82F6;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            line-height: 1.5;
+            padding-bottom: 40px;
+        }
+
+        nav {
+            background: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        .logo { font-weight: 600; font-size: 18px; display: flex; align-items: center; gap: 8px; }
+        
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            margin-left: 24px;
+            transition: color 0.2s;
+        }
+        .nav-links a:hover { color: var(--text-primary); }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        h1 { font-size: 24px; font-weight: 600; }
+        
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-APPROVED { background: var(--success-bg); color: var(--success-text); border: 1px solid var(--success-text); }
+        .status-REJECTED { background: var(--error-bg); color: var(--error-text); border: 1px solid var(--error-text); }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .card-approved {
+            border-left: 4px solid #10B981; 
+        }
+
+        .card-rejected {
+            border-left: 4px solid #EF4444; 
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
+
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .data-item label {
+            display: block;
+            font-size: 12px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .data-item span {
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .timeline {
+            position: relative;
+            margin-left: 10px;
+            border-left: 2px solid #E5E7EB;
+            padding-left: 24px;
+        }
+
+        .event {
+            position: relative;
+            margin-bottom: 24px;
+        }
+
+        .event::before {
+            content: '';
+            position: absolute;
+            left: -31px;
+            top: 4px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 2px solid #fff;
+            box-shadow: 0 0 0 1px #E5E7EB;
+        }
+
+        .event.SUCCESS::before { background: var(--success-text); box-shadow: 0 0 0 2px var(--success-bg); }
+        .event.FAILURE::before, .event.REJECTED::before { background: var(--error-text); box-shadow: 0 0 0 2px var(--error-bg); }
+        .event.WARNING::before { background: var(--warning-text); box-shadow: 0 0 0 2px var(--warning-bg); }
+        .event.APPROVED::before { background: var(--info-text); box-shadow: 0 0 0 2px var(--info-bg); }
+
+        .event-meta {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .event-status-label {
+            font-weight: 600;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            background: #F3F4F6;
+        }
+
+        .event-detail {
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+
+        details {
+            margin-top: 8px;
+        }
+        
+        summary {
+            font-size: 12px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            list-style: none; 
+        }
+        
+        summary:hover { text-decoration: underline; color: var(--text-primary); }
+
+        pre {
+            background: #1F2937;
+            color: #E5E7EB;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            overflow-x: auto;
+            margin-top: 5px;
+            font-family: 'Menlo', 'Monaco', monospace;
+        }
+
+        .actions {
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .btn-secondary {
+            display: inline-block;
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 14px;
+            border: 1px solid var(--border-color);
+            padding: 10px 20px;
+            border-radius: 8px;
+            background: white;
+            transition: all 0.2s;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--text-primary);
+            color: var(--text-primary);
+        }
+
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="logo">🤖 ExpenseAudit</div>
+        <div class="nav-links">
+            <a href="/">New Scan</a>
+            <a href="/history">History</a>
+            <a href="/about">How it works</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        
+        <div class="header-section">
+            <h1>Evaluation Report</h1>
+            {% if decision.approved %}
+                <span class="status-badge status-APPROVED">✅ Approved</span>
+            {% else %}
+                <span class="status-badge status-REJECTED">❌ Rejected</span>
+            {% endif %}
+        </div>
+
+        <div class="card">
+            <div class="card-title">🧾 Receipt Details</div>
+            
+            <div class="data-grid">
+                <div class="data-item">
+                    <label>Vendor</label>
+                    <span>{{ receipt.vendor }}</span>
+                </div>
+                <div class="data-item">
+                    <label>Date</label>
+                    <span>{{ receipt.date }}</span>
+                </div>
+                <div class="data-item">
+                    <label>Total Amount</label>
+                    <span>{{ receipt.currency }} {{ receipt.amount }}</span>
+                </div>
+                <div class="data-item">
+                    <label>Category</label>
+                    <span>{{ receipt.category }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card {% if decision.approved %}card-approved{% else %}card-rejected{% endif %}">
+            <div class="card-title">⚖️ Final Decision</div>
+            <p style="font-size: 16px;">{{ decision.reason }}</p>
+        </div>
+
+        <div class="card">
+            <div class="card-title">
+                🔍 Audit Trail 
+                <span style="font-weight: 400; font-size: 12px; color: #9CA3AF; margin-left: 10px;">ID: {{ audit_log.trace_id }}</span>
+            </div>
+
+            <div class="timeline">
+                {% for step in audit_log.steps %}
+                <div class="event {{ step.status }}">
+                    <div class="event-meta">
+                        {{ step.time }}
+                        <span class="event-status-label">{{ step.step }}</span>
+                    </div>
+                    
+                    <div class="event-detail">
+                        {{ step.detail }}
+                    </div>
+                    
+                    {% if step.data %}
+                    <details>
+                        <summary>Show JSON payload ›</summary>
+                        <pre>{{ step.data }}</pre>
+                    </details>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="actions">
+            <a href="/" class="btn-secondary">← Analyze Another Receipt</a>
+        </div>
+
+    </div>
+
+</body>
+</html>
