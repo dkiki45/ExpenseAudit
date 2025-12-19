@@ -1,6 +1,8 @@
 # ExpenseAudit
 ExpenseAudit is a Travel &amp; Expense decision automation platform that evaluates receipts using policies written in structured natural language (English-as-Code).
 
+https://github.com/dkiki45/ExpenseAudit/blob/442e13034ba2429a25f2a3ee01b34df244f42e5c/ExpenseAudit.mp4
+
 ## English-as-Code
 
 Instead of hard-coding business rules or relying on opaque models, policies are written in plain, structured English that can be read, validated, and reasoned about by both technical and non-technical stakeholders.
